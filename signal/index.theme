@@ -1,0 +1,29 @@
+[Icon Theme]
+Name=signal
+Inherits=graydot
+
+
+Directories=24x24/apps,32x32/apps,scalable/apps
+
+
+## 24x24
+[24x24/apps]
+Size=24
+Context=Applications
+Type=Fixed
+
+
+## 32x32
+[32x32/apps]
+Size=32
+Context=Applications
+Type=Fixed
+
+
+## Scalable
+[scalable/apps]
+Size=48
+Context=Applications
+MinSize=24
+MaxSize=512
+Type=Scalable

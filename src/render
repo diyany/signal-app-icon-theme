@@ -1,0 +1,99 @@
+#!/usr/bin/env ruby
+
+
+THEME_NAME = 'signal'
+
+
+## 32x32
+apps_32x32 = {
+  'deadbeef' => '01',
+  'evince' => '01',
+  'firefox' => '01',
+  'geany' => '01',
+  'gthumb' => '01',
+  'inkscape' => '01',
+  'keepassx' => '01',
+  'liferea' => '01',
+  'qpdfview' => '01',
+  'spacefm' => '01',
+  'spacefm-root' => '01',
+  'sublime-text' => '01',
+  'terminal' => '01',
+  'transmission' => '01',
+  'zathura' => '01',
+}
+
+
+## GROUP BY SIZE
+size_32x32 = {
+  'apps' => apps_32x32,
+}
+
+
+## THEME
+theme = {
+  '32x32' => size_32x32,
+}
+
+
+def check_dir(dir)
+  unless File.directory?(dir)
+    Dir.mkdir(dir)
+  end
+end
+
+
+def run(theme)
+  dir_in = "svg"
+  theme_root = File.expand_path("../#{THEME_NAME}")
+  errors = []
+
+  check_dir(theme_root)
+
+  theme.each do |size, size_in|
+    dir_out = File.join(theme_root, size)
+    check_dir(dir_out)
+
+    if size[/^scalable/]
+      next
+    end
+
+    size_in.each do |cat, cat_in|
+      dir_out = File.join(theme_root, size, cat)
+      check_dir(dir_out)
+
+      puts cat
+
+      cat_in.each do |name, v|
+        file_in = "#{dir_in}/#{size}/#{cat}/#{name}_#{v}.svg"
+
+        if size[/^scalable/]
+          file_out = "#{dir_out}/#{name}.svg"
+          puts_string = "#{name}.svg ---> #{name}.svg"
+          cmd = "cp \"#{file_in}\" \"#{file_out}\""
+        else
+          file_out = "#{dir_out}/#{name}.png"
+          puts_string = "#{name}.svg ---> #{name}.png"
+          cmd = "rsvg-convert \"#{file_in}\" -o \"#{file_out}\""
+        end
+
+        #check_file_exist
+
+        if system cmd
+          puts "OK - " + puts_string
+        else
+          error_string = "!!! ERROR - " + puts_string
+          puts error_string
+          errors << error_string
+        end
+      end
+
+    puts
+    end
+  end
+
+  puts "\nERRORS - #{errors.size}\n" if errors.size > 0
+end
+
+run(theme)
+
